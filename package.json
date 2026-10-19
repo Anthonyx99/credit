@@ -1,0 +1,47 @@
+{
+  "name": "credit",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0"
+  },
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "nuxt typecheck",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:nuxt": "vitest run --project nuxt",
+    "test:e2e": "vitest run --project e2e",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@unovis/ts": "^1.7.1",
+    "nuxt": "^4.6.2",
+    "nuxt-charts": "^2.2.3",
+    "vue": "^3.5.44",
+    "vue-router": "^5.4.0"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.17.0",
+    "@nuxt/test-utils": "^4.3.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^24.19.2",
+    "@vue/test-utils": "^2.5.1",
+    "eslint": "^10.13.0",
+    "happy-dom": "^21.0.3",
+    "prettier": "^3.9.10",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5",
+    "vue-tsc": "^3.3.13"
+  }
+}

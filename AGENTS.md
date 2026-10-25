@@ -162,6 +162,7 @@ credit/
 | Déploiement (Vercel, serveur perso)  | [`docs/deployment.md`](docs/deployment.md)                   |
 | Environnement Docker (dev & tooling) | [`docs/docker.md`](docs/docker.md)                           |
 | Simulateur de crédit                 | [`docs/simulator.md`](docs/simulator.md)                     |
+| Calculateur d'intérêts               | [`docs/interest.md`](docs/interest.md)                       |
 
 ## Workflow attendu d'un agent
 

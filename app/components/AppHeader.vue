@@ -10,7 +10,9 @@ const appConfig = useAppConfig()
       </NuxtLink>
       <ul class="flex items-center gap-4 text-sm">
         <li>
-          <NuxtLink to="/simulateur" class="hover:text-brand-600">Simulateur</NuxtLink>
+          <NuxtLink to="/simulateur" :prefetch="false" class="hover:text-brand-600"
+            >Simulateur</NuxtLink
+          >
         </li>
         <li>
           <NuxtLink to="/" class="hover:text-brand-600">Accueil</NuxtLink>

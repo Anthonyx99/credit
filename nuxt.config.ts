@@ -7,6 +7,10 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/eslint', '@nuxt/test-utils/module', 'nuxt-charts'],
 
+  nuxtChartsLegacy: {
+    global: false,
+  },
+
   css: ['~/assets/css/main.css'],
 
   vite: {

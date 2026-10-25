@@ -53,7 +53,36 @@ pérenne et proche des recommandations officielles Nuxt, sans couche superflue.
    [`deployment.md`](deployment.md).
 9. **Graphiques via `nuxt-charts`** — module Nuxt (composants client-only,
    enums auto-importés) basé sur Unovis. Pas de graphique fait main. Voir
-   [`simulator.md`](simulator.md).
+   [`simulator.md`](simulator.md) et la section « Graphiques » ci-dessous.
+
+## Graphiques (`nuxt-charts`) : poids et chargement
+
+Unovis est lourd : le bundle des graphes pèse environ **2,3 Mo non compressés**
+(~590 ko gzip), dont les données TopoJSON des cartes, inutilisées ici. Le
+tree-shaking est impossible côté `vue-chrts` : `dist/index.js` réexporte toutes
+les cartes et le paquet ne déclare pas `sideEffects: false`.
+
+Deux réglages limitent donc le chargement à la seule page qui affiche un
+graphique :
+
+```ts
+// nuxt.config.ts
+nuxtChartsLegacy: {
+  global: false,
+},
+```
+
+- `global: false` : les composants restent auto-importés dans les `<template>`,
+  mais ne sont plus **enregistrés globalement**. Sans ce réglage, Nuxt ajoute un
+  `<link rel="prefetch">` du bundle Unovis sur **toutes** les pages (mesuré :
+  951 ko téléchargés inutilement depuis `/`).
+- Le lien de navigation vers `/simulateur` (`AppHeader.vue`) utilise
+  `:prefetch="false"` : sinon le prefetch de route (NuxtLink) précharge la page
+  **et ses dépendances statiques**, donc tout le bundle des graphes.
+
+Résultat : `/` ne référence aucun chunk de graphe ; `/simulateur` les charge à la
+demande. Ne pas réactiver `global: true` ni le prefetch de ce lien sans mesurer
+l'impact sur `pnpm build`.
 
 ## Scripts `package.json` (référence)
 

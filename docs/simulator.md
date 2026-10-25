@@ -53,7 +53,9 @@ Conséquences :
   remboursé.
 - **Graphiques** (`nuxt-charts`) : capital restant dû (avec / sans injections) et
   sortie de cash mensuelle. Le tooltip (slot `#tooltip`) précise le mois, l'année,
-  la mensualité, l'injection, le montant réinvesti et la sortie de cash.
+  la mensualité, l'injection, le montant réinvesti et la sortie de cash. Le bundle
+  Unovis (~2,3 Mo) n'est chargé que sur cette page : voir
+  [`stack.md`](stack.md#graphiques-nuxt-charts--poids-et-chargement).
 - **Tableau d'amortissement** (`LoanScheduleTable.vue`) : une ligne par mois, avec
   la colonne `Injection` **éditable**, la mensualité recalculée, le réinvesti et la
   décomposition `Capital mens.` / `Capital inj.`.

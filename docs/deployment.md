@@ -41,6 +41,31 @@ Mapping `runtimeConfig` <-> env, préfixe `NUXT_` :
 - **Jamais** de secret dans une clé `public` (exposée au client).
 - Documenter toute nouvelle variable d'environnement requise.
 
+## Cache des assets
+
+Comportement par défaut du preset `node-server` (identique sur Vercel) :
+
+| Ressource                | En-tête `cache-control`                    |
+| ------------------------ | ------------------------------------------ |
+| `/_nuxt/**` (nom hashé)  | `public, max-age=31536000, immutable`      |
+| `public/**` (nom stable) | aucun — seulement `ETag` + `Last-Modified` |
+| HTML rendu (SSR)         | aucun                                      |
+
+- Les chunks Nuxt sont hashés par contenu : cache immutable d'un an sans risque,
+  un nouveau build change leur nom. Rien à configurer.
+- Les fichiers de `public/` gardent leur nom : pas de `Cache-Control` par défaut,
+  donc revalidation conditionnelle à chaque requête. Pour les mettre en cache,
+  ajouter une règle ciblée :
+
+  ```ts
+  routeRules: {
+    '/favicon.svg': { headers: { 'cache-control': 'public, max-age=86400' } },
+  }
+  ```
+
+- Le HTML SSR n'a pas d'en-tête de cache (contenu dynamique). Pour le mettre en
+  cache, passer par `isr` / `prerender` dans `routeRules`.
+
 ## `routeRules` (cache / rendu)
 
 Utiliser `routeRules` pour le rendu hybride et le cache :

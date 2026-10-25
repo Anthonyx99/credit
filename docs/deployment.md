@@ -41,30 +41,54 @@ Mapping `runtimeConfig` <-> env, préfixe `NUXT_` :
 - **Jamais** de secret dans une clé `public` (exposée au client).
 - Documenter toute nouvelle variable d'environnement requise.
 
-## Cache des assets
+## Cache des assets & cache busting
 
-Comportement par défaut du preset `node-server` (identique sur Vercel) :
+Toutes les URL produites par le build sont hashées par contenu : un fichier
+modifié change de nom, donc d'URL. Le cache busting est automatique, rien à
+versionner à la main.
 
-| Ressource                | En-tête `cache-control`                    |
-| ------------------------ | ------------------------------------------ |
-| `/_nuxt/**` (nom hashé)  | `public, max-age=31536000, immutable`      |
-| `public/**` (nom stable) | aucun — seulement `ETag` + `Last-Modified` |
-| HTML rendu (SSR)         | aucun                                      |
+Réglage en place (`nuxt.config.ts`) :
 
-- Les chunks Nuxt sont hashés par contenu : cache immutable d'un an sans risque,
-  un nouveau build change leur nom. Rien à configurer.
-- Les fichiers de `public/` gardent leur nom : pas de `Cache-Control` par défaut,
-  donc revalidation conditionnelle à chaque requête. Pour les mettre en cache,
-  ajouter une règle ciblée :
+```ts
+routeRules: {
+  '/**': { headers: { 'cache-control': 'no-cache' } },
+},
+```
 
-  ```ts
-  routeRules: {
-    '/favicon.svg': { headers: { 'cache-control': 'public, max-age=86400' } },
-  }
-  ```
+En-têtes constatés en preview (preset `node-server`) :
 
-- Le HTML SSR n'a pas d'en-tête de cache (contenu dynamique). Pour le mettre en
-  cache, passer par `isr` / `prerender` dans `routeRules`.
+| Ressource                | `cache-control`                       |
+| ------------------------ | ------------------------------------- |
+| `/_nuxt/**` (nom hashé)  | `public, max-age=31536000, immutable` |
+| HTML rendu (SSR)         | `no-cache` + `ETag`                   |
+| `public/**` (nom stable) | `no-cache` + `ETag`                   |
+
+- Nitro conserve son en-tête `immutable` pour `/_nuxt/**`, qui garde priorité :
+  le `no-cache` ne s'applique donc qu'au HTML et aux fichiers de `public/`.
+- `no-cache` n'empêche pas la mise en cache : la réponse est stockée puis
+  revérifiée (`304` si l'`ETag` n'a pas changé). Sans cet en-tête, le navigateur
+  peut appliquer un cache heuristique au HTML et continuer à référencer des
+  chunks supprimés lors d'un déploiement.
+- Pour donner un TTL long à un fichier de `public/`, ajouter une règle plus
+  spécifique, par exemple
+  `'/logo.png': { headers: { 'cache-control': 'public, max-age=86400' } }`.
+
+### Mise à jour d'un client déjà ouvert
+
+- **Manifeste de build** (`experimental.appManifest`, actif par défaut) : le
+  client interroge `/_nuxt/builds/latest.json` (avec un cache-buster
+  `?timestamp`) selon `experimental.checkOutdatedBuildInterval` (1 h par défaut).
+  Si l'`id` diffère du build courant, la page est rechargée à la navigation
+  suivante.
+- **Échec de chargement de chunk** (`experimental.emitRouteChunkError:
+'automatic'`, défaut) : si un chunk ne se charge plus (vieux HTML + chunk
+  supprimé), Nuxt appelle `reloadNuxtApp` — rechargement complet, état conservé.
+- Pour forcer la mise à jour immédiatement, un rechargement dur suffit : le HTML
+  est en `no-cache`.
+
+Pour une page réellement statique, `prerender` / `isr` restent disponibles dans
+`routeRules` ; vérifier les en-têtes en preview car ils prennent le pas sur le
+`no-cache` global.
 
 ## `routeRules` (cache / rendu)
 

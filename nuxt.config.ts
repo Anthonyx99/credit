@@ -13,6 +13,10 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  routeRules: {
+    '/**': { headers: { 'cache-control': 'no-cache' } },
+  },
+
   vite: {
     plugins: [tailwindcss()],
   },

@@ -11,8 +11,9 @@ bonne version de Node (Nuxt 4.6 exige Node `^22.22.3 || ^24.15.0`).
 - **Intégration WSL2 activée** : Docker Desktop > Settings > Resources > WSL
   Integration > cocher la distro `Ubuntu`. Sans cela, la commande `docker` est
   absente dans WSL et les bind-mounts vers `/home/...` échouent.
-- Lancer les commandes **depuis WSL/Ubuntu**, dans `/chemin/vers/credit` (les
-  bind-mounts de chemins UNC Windows `\\wsl.localhost\...` ne sont pas fiables).
+- Lancer les commandes **depuis WSL/Ubuntu**, dans le dossier du projet côté
+  WSL (ex. `/chemin/vers/credit`) : les bind-mounts de chemins UNC Windows
+  `\\wsl.localhost\...` ne sont pas fiables.
 - Compose v2 (vérifié : Docker 29 / Compose v5).
 
 ## Fichiers

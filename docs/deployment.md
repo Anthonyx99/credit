@@ -168,8 +168,16 @@ Câblage Traefik, via les labels du service `app` :
 
 - Aucun port n'est publié : Traefik joint le conteneur par le réseau `web`, et
   le certificat est émis par le resolver `myresolver`.
-- Le host vient de `SITE_HOST` (défaut `credit.example.com`), surchargeable :
-  `SITE_HOST=credit.exemple.fr make prod-up`.
+- Le host vient de `SITE_HOST` (défaut `credit.example.com`). Sur le serveur,
+  renseigner le domaine réel dans le `.env` du projet (versionné nulle part) :
+
+  ```bash
+  # .env sur le serveur
+  SITE_HOST=credit.example.com
+  ```
+
+  ou ponctuellement : `SITE_HOST=credit.example.com make prod-up`.
+
 - Environnement figé : `NODE_ENV=production`, `HOST=0.0.0.0`, `PORT=3000`,
   `TZ=Europe/Paris`. `restart: unless-stopped` assure la reprise après reboot.
 

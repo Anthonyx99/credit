@@ -80,7 +80,7 @@ clean: ## Détruit les conteneurs + le volume node_modules
 prod-build: ## Build l'image de production
 	$(PROD) build
 
-prod-up: ## Démarre la prod (Traefik : credit.example.com)
+prod-up: ## Démarre la prod (Traefik, host = SITE_HOST)
 	$(PROD) up -d
 
 prod-down: ## Arrête la prod

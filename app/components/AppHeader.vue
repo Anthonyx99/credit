@@ -15,6 +15,11 @@ const appConfig = useAppConfig()
           >
         </li>
         <li>
+          <NuxtLink to="/interets" :prefetch="false" class="hover:text-brand-600"
+            >Intérêts</NuxtLink
+          >
+        </li>
+        <li>
           <NuxtLink to="/" class="hover:text-brand-600">Accueil</NuxtLink>
         </li>
         <li>

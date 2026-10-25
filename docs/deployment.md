@@ -154,6 +154,11 @@ Traefik) :
 docker network create web
 ```
 
+Les fichiers compose ne déclarent pas de clé `name:` (refusée par les versions
+de Compose antérieures à 2.3.3) : le nom de projet est déduit du nom du dossier.
+Cloner dans un dossier `credit`, ou figer le nom avec
+`COMPOSE_PROJECT_NAME=credit`.
+
 Câblage Traefik, via les labels du service `app` :
 
 | Label                                                       | Valeur          |

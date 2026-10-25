@@ -10,7 +10,9 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends git ca-certificates openssl \
   && rm -rf /var/lib/apt/lists/* \
   && npm install --global pnpm@${PNPM_VERSION} \
-  && pnpm --version
+  && pnpm --version \
+  && mkdir -p "$PNPM_HOME" \
+  && chown -R node:node "$PNPM_HOME"
 WORKDIR /app
 
 FROM base AS dev

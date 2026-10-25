@@ -1,0 +1,30 @@
+name: credit
+
+services:
+  app:
+    build:
+      context: .
+      target: prod
+    image: credit-prod
+    container_name: credit
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: '3000'
+      TZ: Europe/Paris
+      NUXT_TELEMETRY_DISABLED: '1'
+    networks:
+      - web
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=web'
+      - 'traefik.http.routers.credit.entrypoints=web,websecure'
+      - 'traefik.http.routers.credit.rule=Host(`${SITE_HOST:-credit.example.com}`)'
+      - 'traefik.http.services.credit-svc.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.credit.tls=true'
+      - 'traefik.http.routers.credit.tls.certresolver=myresolver'
+
+networks:
+  web:
+    external: true

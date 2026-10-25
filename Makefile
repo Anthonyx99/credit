@@ -1,10 +1,14 @@
 DC := docker compose
+PROD := $(DC) -f docker-compose.prod.yml
 APP := app
 RUN := $(DC) run --rm $(APP)
 
+GIT ?= git
+BRANCH ?= main
+
 .DEFAULT_GOAL := help
 
-.PHONY: help install up dev down logs sh run build preview lint lint-fix format format-check typecheck test test-unit test-nuxt test-e2e test-watch rebuild clean
+.PHONY: help install up dev down logs sh run build preview lint lint-fix format format-check typecheck test test-unit test-nuxt test-e2e test-watch rebuild clean prod-build prod-up prod-down prod-logs deploy
 
 help: ## Affiche cette aide
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -70,3 +74,22 @@ rebuild: ## Rebuild l'image dev sans cache
 
 clean: ## Détruit les conteneurs + le volume node_modules
 	$(DC) down -v
+
+## Production (serveur, derrière Traefik)
+
+prod-build: ## Build l'image de production
+	$(PROD) build
+
+prod-up: ## Démarre la prod (Traefik : credit.example.com)
+	$(PROD) up -d
+
+prod-down: ## Arrête la prod
+	$(PROD) down
+
+prod-logs: ## Suit les logs de la prod
+	$(PROD) logs -f $(APP)
+
+deploy: ## Serveur : pull + rebuild + relance de la prod
+	$(GIT) pull origin $(BRANCH)
+	$(PROD) build
+	$(PROD) up -d --remove-orphans

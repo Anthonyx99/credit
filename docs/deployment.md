@@ -1,4 +1,7 @@
-# Déploiement — Vercel
+# Déploiement
+
+Deux cibles : **Vercel** (preset Nitro, build côté plateforme) et un **serveur
+perso** en Docker derrière **Traefik** (voir la section en fin de document).
 
 ## Preset Nitro
 
@@ -129,3 +132,60 @@ Une PR ne peut être mergée que si toute la chaîne passe.
 - [ ] Aucun secret dans le code ou le payload client.
 - [ ] `compatibilityDate` fixée dans `nuxt.config.ts` (format `YYYY-MM-DD`).
 - [ ] `.output/`, `.nuxt/`, `node_modules/`, `.env*` ignorés par git.
+
+## Serveur perso (Docker + Traefik)
+
+La prod est décrite dans `docker-compose.prod.yml` ; `docker-compose.yml` reste
+le dev. Elle cible le stage `prod` du `Dockerfile`, qui ne contient que
+`.output/` et lance `node .output/server/index.mjs`.
+
+```bash
+make prod-build   # build l'image credit-prod
+make prod-up      # démarre le conteneur derrière Traefik
+make prod-logs    # suit les logs
+make prod-down    # arrête
+make deploy       # serveur : git pull + build + up -d
+```
+
+Prérequis sur le serveur : le réseau Docker externe `web` (créé par la stack
+Traefik) :
+
+```bash
+docker network create web
+```
+
+Câblage Traefik, via les labels du service `app` :
+
+| Label                                                       | Valeur          |
+| ----------------------------------------------------------- | --------------- |
+| `traefik.enable`                                            | `true`          |
+| `traefik.docker.network`                                    | `web`           |
+| `traefik.http.routers.credit.rule`                          | `Host(...)`     |
+| `traefik.http.routers.credit.entrypoints`                   | `web,websecure` |
+| `traefik.http.routers.credit.tls`                           | `true`          |
+| `traefik.http.routers.credit.tls.certresolver`              | `myresolver`    |
+| `traefik.http.services.credit-svc.loadbalancer.server.port` | `3000`          |
+
+- Aucun port n'est publié : Traefik joint le conteneur par le réseau `web`, et
+  le certificat est émis par le resolver `myresolver`.
+- Le host vient de `SITE_HOST` (défaut `credit.example.com`), surchargeable :
+  `SITE_HOST=credit.exemple.fr make prod-up`.
+- Environnement figé : `NODE_ENV=production`, `HOST=0.0.0.0`, `PORT=3000`,
+  `TZ=Europe/Paris`. `restart: unless-stopped` assure la reprise après reboot.
+
+Déploiement courant, depuis le clone présent sur le serveur :
+
+```bash
+make deploy              # git pull origin main + build + up -d
+make deploy BRANCH=dev   # depuis une autre branche
+```
+
+Vérification :
+
+```bash
+curl -s https://credit.example.com/api/health
+```
+
+Les chunks sont hashés et le HTML est en `no-cache` (voir « Cache des assets &
+cache busting ») : un `up -d` suffit, le client récupère la nouvelle version au
+rechargement, sans purge de cache manuelle.

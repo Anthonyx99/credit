@@ -88,6 +88,7 @@ make test       # Vitest (unit + nuxt + e2e)
 make build      # build production
 make sh         # shell dans le conteneur
 make clean      # conteneurs + volume node_modules
+make deploy     # serveur : pull + rebuild + relance de la prod
 ```
 
 Sous le capot, chaque cible exécute `docker compose run --rm app pnpm <script>`.
@@ -158,7 +159,7 @@ credit/
 | Styling Tailwind v4                  | [`docs/styling.md`](docs/styling.md)                         |
 | Backend `server/`                    | [`docs/server.md`](docs/server.md)                           |
 | Tests & qualité                      | [`docs/testing-and-quality.md`](docs/testing-and-quality.md) |
-| Déploiement Vercel                   | [`docs/deployment.md`](docs/deployment.md)                   |
+| Déploiement (Vercel, serveur perso)  | [`docs/deployment.md`](docs/deployment.md)                   |
 | Environnement Docker (dev & tooling) | [`docs/docker.md`](docs/docker.md)                           |
 | Simulateur de crédit                 | [`docs/simulator.md`](docs/simulator.md)                     |
 

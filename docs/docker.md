@@ -37,9 +37,9 @@ Le `Makefile` enveloppe tout. À lancer depuis WSL, dans le dossier du projet :
 ```bash
 make help         # liste toutes les cibles
 make install      # pnpm install dans le conteneur
-make up           # serveur de dev (http://localhost:3000)
+make up           # serveur de dev en arrière-plan (port : APP_PORT)
 make down         # arrêt
-make logs         # logs du service app
+make logs         # logs du service app (suivi continu)
 make sh           # shell dans le conteneur
 make lint         # ESLint
 make lint-fix     # ESLint --fix

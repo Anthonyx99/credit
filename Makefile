@@ -13,7 +13,7 @@ install: ## Installe les dépendances (dans le conteneur)
 	$(RUN) pnpm install
 
 up: ## Démarre le serveur de dev (http://localhost:3000)
-	$(DC) up $(APP)
+	$(DC) up $(APP) -d
 
 dev: up ## Alias de up
 
